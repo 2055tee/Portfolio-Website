@@ -14,8 +14,8 @@ const LINKS = [
   {
     icon: '💼',
     label: 'LinkedIn',
-    value: 'Add your LinkedIn URL',
-    href: '#',
+    value: 'linkedin.com/in/nuttawut-lin',
+    href: 'https://www.linkedin.com/in/nuttawut-lin-9183222a3/',
   },
 ]
 
