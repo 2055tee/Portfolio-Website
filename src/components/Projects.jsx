@@ -9,6 +9,10 @@ const PROJECTS = [
     github: 'https://github.com/2055tee/Portfolio-Website',
     demo: null,
     status: 'live',
+    demoExperience: {
+      type: 'live',
+      note: "You're looking at it — this portfolio is the live deployment, served from Azure Static Web Apps with automated CI/CD on every push.",
+    },
     details: {
       overview:
         'Designed and built this portfolio from scratch using React and Vite. Configured Azure Static Web Apps for hosting and wired up a GitHub Actions pipeline so every push to main automatically builds and deploys — no manual steps required.',
@@ -39,6 +43,19 @@ const PROJECTS = [
     github: 'https://github.com/2055tee/Deep-RL-labour-market-simulation',
     demo: null,
     status: 'done',
+    demoExperience: {
+      type: 'gallery',
+      notebookUrl: 'https://colab.research.google.com/github/2055tee/Deep-RL-labour-market-simulation/blob/main/colab/train_colab.ipynb',
+      images: [
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/summary.png',      caption: 'Summary of outcomes across market structures' },
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/wages.png',        caption: 'Wage distributions' },
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/employment.png',   caption: 'Employment levels' },
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/profit.png',       caption: 'Firm profit' },
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/active_firms.png', caption: 'Active firms over time' },
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/workers.png',      caption: 'Worker agents' },
+        { src: 'https://raw.githubusercontent.com/2055tee/Deep-RL-labour-market-simulation/main/charts/advantage.png',    caption: 'PPO advantage estimates' },
+      ],
+    },
     details: {
       overview:
         'Modelled a labour market as a multi-agent environment where firms and workers are RL agents that learn wage-setting and job-acceptance strategies. Implemented four market structures — competitive, cooperative, reformed, and solo — and analysed how minimum wage policy affects emergent outcomes. Built an interactive Solara web app to visualise agent behaviour and wage distributions.',
@@ -69,6 +86,10 @@ const PROJECTS = [
     github: 'https://github.com/2055tee/WebProgramming',
     demo: null,
     status: 'done',
+    demoExperience: {
+      type: 'local',
+      runHint: 'Full-stack FastAPI + ZODB app — runs locally. Clone the repo and start the Python server (uvicorn) to explore the multi-page forum and room-booking app.',
+    },
     details: {
       overview:
         'Built a full-stack web application as a Year 2 coursework project. The Python backend handles routing and server-side rendering with templates, while ZODB stores application state as persistent Python objects. The frontend uses HTML, CSS, and vanilla JavaScript.',
@@ -99,6 +120,10 @@ const PROJECTS = [
     github: 'https://github.com/2055tee/OOP_Simple_banking_system',
     demo: null,
     status: 'done',
+    demoExperience: {
+      type: 'local',
+      runHint: 'C++ console app — compile with g++ or MSVC and run locally. The gen_graph module also generates SVG/HTML balance charts you can open in any browser.',
+    },
     details: {
       overview:
         'Implemented a console banking system in C++ with support for multiple account types, deposits, withdrawals, and balance enquiries. Built around an OOP class hierarchy as a Year 1 Semester 2 coursework project.',
@@ -129,6 +154,10 @@ const PROJECTS = [
     github: 'https://github.com/2055tee/Python_Rythm_Game',
     demo: null,
     status: 'done',
+    demoExperience: {
+      type: 'local',
+      runHint: 'Pygame desktop game — clone and run with Python + Pygame installed. Press D, F, J, K to hit notes in time with the music.',
+    },
     details: {
       overview:
         'Built a playable rhythm game in Python as a first-semester Year 1 project. Notes scroll down the screen and the player presses the matching key within a timing window. Implemented a game loop, hit detection graded as Perfect / Good / Miss, and a live score display.',
@@ -153,6 +182,46 @@ const PROJECTS = [
   },
 ]
 
+function DemoExperience({ de }) {
+  if (!de) return null
+
+  if (de.type === 'live') {
+    return (
+      <div className="modal-section">
+        <h3>Live Demo</h3>
+        <div className="demo-live-note">{de.note}</div>
+      </div>
+    )
+  }
+
+  if (de.type === 'local') {
+    return (
+      <div className="modal-section">
+        <h3>Try It Yourself</h3>
+        <div className="demo-local-note">{de.runHint}</div>
+      </div>
+    )
+  }
+
+  if (de.type === 'gallery') {
+    return (
+      <div className="modal-section">
+        <h3>Results</h3>
+        <div className="demo-gallery">
+          {de.images.map(img => (
+            <figure key={img.src} className="demo-figure">
+              <img src={img.src} alt={img.caption} loading="lazy" />
+              <figcaption>{img.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return null
+}
+
 function ProjectModal({ project, onClose }) {
   useEffect(() => {
     const onKey = e => { if (e.key === 'Escape') onClose() }
@@ -164,6 +233,8 @@ function ProjectModal({ project, onClose }) {
     }
   }, [onClose])
 
+  const de = project.demoExperience
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
@@ -171,8 +242,8 @@ function ProjectModal({ project, onClose }) {
 
         <div className="modal-header">
           <h2 className="modal-title">{project.title}</h2>
-          <span className={`project-badge ${project.status === 'live' ? 'badge-live' : 'badge-wip'}`}>
-            {project.status === 'live' ? 'Live' : 'WIP'}
+          <span className={`project-badge ${project.status === 'live' ? 'badge-live' : project.status === 'done' ? 'badge-done' : 'badge-wip'}`}>
+            {project.status === 'live' ? 'Live' : project.status === 'done' ? 'Done' : 'WIP'}
           </span>
         </div>
 
@@ -199,6 +270,8 @@ function ProjectModal({ project, onClose }) {
           </div>
         </div>
 
+        <DemoExperience de={de} />
+
         <div className="modal-footer">
           <a href={project.github} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
             View on GitHub &#x2197;
@@ -206,6 +279,11 @@ function ProjectModal({ project, onClose }) {
           {project.demo && (
             <a href={project.demo} className="btn btn-outline" target="_blank" rel="noopener noreferrer">
               Live Demo &#x2197;
+            </a>
+          )}
+          {de?.notebookUrl && (
+            <a href={de.notebookUrl} className="btn btn-outline" target="_blank" rel="noopener noreferrer">
+              Open in Colab &#x2197;
             </a>
           )}
         </div>

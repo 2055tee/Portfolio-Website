@@ -14,3 +14,7 @@ yarn-error.log*
 .idea/
 
 .claude/settings.local.json
+
+# Local tool config — never commit
+.mcp.json
+.playwright-mcp/
